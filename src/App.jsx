@@ -3,15 +3,39 @@ import img_C1 from "./assets/c1.png";
 import img_C2 from "./assets/c2.png";
 import SplitScreen from "./layout/SplitScreen";
 
-const TOTAL_CATPOP = [{ id: 1, name: "Tasr", country: "America", count: 0 }];
+// const TOTAL_CATPOP = [{ id: 1, name: "Tasr", country: "America", count: 0 }];
 const LEADERBOARD = { totalCat: 0, totalCount: 0, leaderName: "Name" };
 function App() {
-  const [catpop, setCatpop] = useState(TOTAL_CATPOP);
-  const [leader, setLeader] = useState();
+  const [catpop, setCatpop] = useState([]);
+  const [leader, setLeader] = useState({
+    name: "No leader",
+    country: "No country",
+  });
+  const [biggestCount, setBiggestCount] = useState(0);
+  const [totalCat, setTotalCat] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [catName, setCatname] = useState("");
   const [catCountry, setCatCountry] = useState("");
   const [error, setError] = useState(false);
   const [catPic, setCatPic] = useState(img_C1);
+
+  const findLeaderCat = () => {
+    if (catpop.length === 0) {
+      setLeader({ name: "No leader", country: "No country" });
+      return;
+    }
+
+    const maxCount = Math.max(...catpop.map((cat) => cat.count));
+    const leaders = catpop.filter((cat) => cat.count === maxCount);
+
+    if (leaders.length > 1) {
+      setLeader({ name: "No leader", country: "No country" });
+      setBiggestCount(leaders[0].count);
+    } else {
+      setLeader(leaders[0]);
+      setBiggestCount(leaders[0].count);
+    }
+  };
 
   const handleChangeCatName = (e) => setCatname(e.target.value);
   const handleChangeCatCountry = (e) => setCatCountry(e.target.value);
@@ -37,18 +61,36 @@ function App() {
         setCatPic(img_C1);
       }, 100);
       setCatpop(updateCount);
+      setTotalCount(() => totalCount + 1);
     }
   };
+  // const handleDecreaseCount = (catId) => {
+  //   const catIndex = catpop.findIndex((cat) => cat.id === catId);
+  //   if (catIndex != -1) {
+  //     const updateCountCat = [...catpop];
+  //     updateCountCat[catIndex] = {
+  //       ...updateCountCat[catIndex],
+  //       count: updateCountCat[catIndex].count - 1,
+  //     };
+  //     if (updateCountCat[catIndex].count >= 0) {
+  //       setCatpop(updateCountCat);
+  //       setTotalCount(() => totalCount - 1);
+  //     }
+  //   }
+  //   findLeaderCat();
+  // };
+
   const handleDecreaseCount = (catId) => {
     const catIndex = catpop.findIndex((cat) => cat.id === catId);
-    if (catIndex != -1) {
+    if (catIndex !== -1) {
       const updateCountCat = [...catpop];
-      updateCountCat[catIndex] = {
-        ...updateCountCat[catIndex],
-        count: updateCountCat[catIndex].count - 1,
-      };
-      if (updateCountCat[catIndex].count >= 0) {
+      if (updateCountCat[catIndex].count > 0) {
+        updateCountCat[catIndex] = {
+          ...updateCountCat[catIndex],
+          count: updateCountCat[catIndex].count - 1,
+        };
         setCatpop(updateCountCat);
+        setTotalCount(() => totalCount - 1);
       }
     }
   };
@@ -73,6 +115,7 @@ function App() {
     });
     setError(false);
     setCatpop(newCatPop);
+    setTotalCat(() => totalCat + 1);
   };
 
   const handleDeleteCat = (Idcat) => {
@@ -81,13 +124,15 @@ function App() {
     if (findCatIndex !== -1) {
       newCatPop.splice(findCatIndex, 1);
       setCatpop(newCatPop);
+      setTotalCat(() => totalCat - 1);
     }
   };
-  
-  
-  const findTotalCount = () => {};
+  useEffect(() => {
+    findLeaderCat();
+  }, [catpop, totalCount]);
   const findLeader = () => {};
   const findHighestClick = () => {};
+
   return (
     <SplitScreen>
       {/******** Left Side  *********/}
@@ -140,23 +185,25 @@ function App() {
             <div className="flex justify-evenly">
               <div>
                 <h1 className="text-3xl font-semibold italic">Total Cat</h1>
-                <h1 className="text-3xl font-semibold italic">0</h1>
+                <h1 className="text-3xl font-semibold italic">{totalCat}</h1>
               </div>
               <div>
                 <h1 className="text-3xl font-semibold italic">Total Count</h1>
-                <h1 className="text-3xl font-semibold italic">0</h1>
+                <h1 className="text-3xl font-semibold italic">{totalCount}</h1>
               </div>
             </div>
             <div className="flex justify-evenly">
               <div>
                 <h1 className="text-3xl font-semibold italic">LEADER</h1>
                 <h1 className="text-3xl font-semibold italic">
-                  Name : Country
+                  {leader.name} : {leader.country}
                 </h1>
               </div>
               <div>
                 <h1 className="text-3xl font-semibold italic">Highest Click</h1>
-                <h1 className="text-3xl font-semibold italic">0</h1>
+                <h1 className="text-3xl font-semibold italic">
+                  {biggestCount}
+                </h1>
               </div>
             </div>
           </div>

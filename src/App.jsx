@@ -4,7 +4,7 @@ import img_C2 from "./assets/c2.png";
 import SplitScreen from "./layout/SplitScreen";
 
 // const TOTAL_CATPOP = [{ id: 1, name: "Tasr", country: "America", count: 0 }];
-const LEADERBOARD = { totalCat: 0, totalCount: 0, leaderName: "Name" };
+
 function App() {
   const [catpop, setCatpop] = useState([]);
   const [leader, setLeader] = useState({
@@ -44,6 +44,7 @@ function App() {
     const catIndex = catpop.findIndex((cat) => cat.id === catId);
     if (catIndex !== -1) {
       const updatedCatpop = [...catpop];
+      setTotalCount(totalCount - updatedCatpop[catIndex].count);
       updatedCatpop[catIndex] = { ...updatedCatpop[catIndex], count: 0 };
       setCatpop(updatedCatpop);
     }
@@ -64,21 +65,6 @@ function App() {
       setTotalCount(() => totalCount + 1);
     }
   };
-  // const handleDecreaseCount = (catId) => {
-  //   const catIndex = catpop.findIndex((cat) => cat.id === catId);
-  //   if (catIndex != -1) {
-  //     const updateCountCat = [...catpop];
-  //     updateCountCat[catIndex] = {
-  //       ...updateCountCat[catIndex],
-  //       count: updateCountCat[catIndex].count - 1,
-  //     };
-  //     if (updateCountCat[catIndex].count >= 0) {
-  //       setCatpop(updateCountCat);
-  //       setTotalCount(() => totalCount - 1);
-  //     }
-  //   }
-  //   findLeaderCat();
-  // };
 
   const handleDecreaseCount = (catId) => {
     const catIndex = catpop.findIndex((cat) => cat.id === catId);
@@ -122,16 +108,16 @@ function App() {
     const newCatPop = [...catpop];
     const findCatIndex = newCatPop.findIndex((cat) => cat.id === Idcat);
     if (findCatIndex !== -1) {
+      setTotalCount(totalCount - newCatPop[findCatIndex].count);
       newCatPop.splice(findCatIndex, 1);
       setCatpop(newCatPop);
       setTotalCat(() => totalCat - 1);
     }
   };
+
   useEffect(() => {
     findLeaderCat();
-  }, [catpop, totalCount]);
-  const findLeader = () => {};
-  const findHighestClick = () => {};
+  }, [catpop, totalCount,totalCat]);
 
   return (
     <SplitScreen>

@@ -18,6 +18,7 @@ function App() {
   const [catCountry, setCatCountry] = useState("");
   const [error, setError] = useState(false);
   const [catPic, setCatPic] = useState(img_C1);
+  const [catError, setCatError] = useState("");
 
   const findLeaderCat = () => {
     if (catpop.length === 0) {
@@ -88,10 +89,16 @@ function App() {
     );
 
     if (isDuplicate) {
-      console.log("Duplicate name and country found.");
+      setCatError("Duplicate name and country found.");
       setError(true);
       return;
     }
+    if (catName === "") {
+      setCatError("Cat name required");
+      setError(true);
+      return;
+    }
+
     const newCatPop = [...catpop];
     newCatPop.push({
       id: newCatPop.length + 1,
@@ -117,7 +124,7 @@ function App() {
 
   useEffect(() => {
     findLeaderCat();
-  }, [catpop, totalCount,totalCat]);
+  }, [catpop, totalCount, totalCat]);
 
   return (
     <SplitScreen>
@@ -150,9 +157,7 @@ function App() {
               <option value="UK">UK</option>
             </select>
             {/* Error */}
-            {error ? (
-              <p className="text-red-500">Duplicate name and country found.</p>
-            ) : null}
+            {error ? <p className="text-red-500">{catError}</p> : null}
             {/* Submit */}
             <button
               type="submit"

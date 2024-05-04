@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import img_C1 from "./assets/c1.png";
 import img_C2 from "./assets/c2.png";
+import sound from "./assets/sound.mp3"
 import SplitScreen from "./layout/SplitScreen";
 
 // const TOTAL_CATPOP = [{ id: 1, name: "Tasr", country: "America", count: 0 }];
@@ -19,6 +20,7 @@ function App() {
   const [error, setError] = useState(false);
   const [catPic, setCatPic] = useState(img_C1);
   const [catError, setCatError] = useState("");
+  const audio = new Audio(sound)
 
   const findLeaderCat = () => {
     if (catpop.length === 0) {
@@ -63,6 +65,7 @@ function App() {
         setCatPic(img_C1);
       }, 100);
       setCatpop(updateCount);
+      audio.play();
       setTotalCount(() => totalCount + 1);
     }
   };
